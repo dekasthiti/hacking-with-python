@@ -150,12 +150,12 @@ print(outputStr)
 # Rotate an image by 90 degrees
 import numpy as np
 
-# def rotateBy90(inputMatrix):
-    # [rows columns] = np.shape(inputMatrix)
-    # left = 0
-    # right = columns
-    # down = 0
-    # up = rows
+def rotateBy90(inputMatrix):
+    [rows columns] = np.shape(inputMatrix)
+    left = 0
+    right = columns
+    down = 0
+    up = rows
 
     # while(left < columns and down < up)
     # {
