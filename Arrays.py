@@ -211,13 +211,25 @@ def zeroOutRowCol(inputMatrix):
     #Get the [x, y] position of this element
     # lists allow retrieving index like this: tmplist.index(value you are looking for)
     # testlist.index(element) if element in testlist else None
+    # or, for i in [i for i,x in enumerate(testlist) if x == 1]:
     # np arange / arrays don't have the option
     # Set [x, :] and [:, y] to 0
-    inputMatrix[:, 1] = inputMatrix[1,:] = [0,0,0]  #this notation works only for numpy arrays
-    return inputMatrix
+    #inputMatrix[:, 1] = inputMatrix[1,:] = [0,0,0]  #this notation works only for numpy arrays
+    
+    [rows, columns] = np.shape(inputMatrix)
+    #outputMatrix =  inputMatrix  # this makes output an alias of input, changing input when output changes
+    outputMatrix = np.zeros((rows, columns))
+    #for i in rows:  #int object not iterable error!
+    #    for j in columns: # int object not iterable error!
+    outputMatrix[:,:] = inputMatrix[:,:]
+    for i in range(rows):
+         for j in range(columns):
+            if inputMatrix[i][j] == 0:
+                outputMatrix[i, :] = outputMatrix[:, j] = 0
+
+    return outputMatrix
 
 inputMatrix = np.array([[1, 2, 3], [4, 0, 6], [7, 8, 9]])
-coord = [4,4]
 outputMatrix = zeroOutRowCol(inputMatrix)
 print outputMatrix
 
