@@ -151,19 +151,95 @@ print(outputStr)
 import numpy as np
 
 def rotateBy90(inputMatrix):
-    [rows columns] = np.shape(inputMatrix)
+    [rows, columns] = np.shape(inputMatrix)
     left = 0
-    right = columns
+    right = columns - 1 # 0 based indexing
     down = 0
-    up = rows
+    up = rows - 1 # 0 based indexing
+    outputMatrix = np.ones((rows, columns))
 
-    # while(left < columns and down < up)
-    # {
-    #     tmp = inputMatrix[down, :]
-    # }
+    while (left < right and down < up):
+        for i, j in zip(range(rows), range(columns)): #https://stackoverflow.com/questions/18648626/for-loop-with-two-variables
+            #outputMatrix[first_row][j from first_column to last_column)] = inputMatrix[i from last_row to first_row][first_column] # there is a double copy here for elements in the corner    
+            outputMatrix[down][j] = inputMatrix[up-i][left]
+            #outputMatrix[down][:] = inputMatrix[-up:][left] (#check if you can use slice indices)
 
+
+        for i, j in zip(range(rows), range(columns)):   
+            #outputMatrix[i in first_row + 1 (to account for corner element) to last_row][last_column] = inputMatrix[first_row][j from first_column to last_column]
+            outputMatrix[i][right] = inputMatrix[down][j]
+
+
+        for i, j in zip(range(rows), range(columns)):
+            #outputMatrix[last_row][j in last_column + 1 (to account for corner element) to first_column] = inputMatrix[i in first_row + 1 to last_row][last_column]
+            outputMatrix[up][right-j] = inputMatrix[i][right]
+
+
+        for i, j in zip(range(rows), range(columns)):
+            #outputMatrix[i in last_row + 1 to first_row][first_column] = inputMatrix[last_row][j in last_column+1 to first_column]
+            outputMatrix[up - i][left] = inputMatrix[up][right - j]
+            
+
+        ##1st input row done: move down one step toward up
+        down+=1
+
+        #1st input column done: move left one step toward the right
+        left+=1
+
+        #last input column done: move right one step toward left
+        right-=1
+
+        #last input row donw: move up one step toward down
+        up-=1
+
+    #Center element (when left = right = up = down)
+    outputMatrix[down][left] = inputMatrix[up][right]
+
+    return outputMatrix
 
 inputMatrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
-print inputMatrix[0]
-print np.transpose(inputMatrix)
-print np.shape(inputMatrix)[1]
+print inputMatrix
+#print np.transpose(inputMatrix)
+#print np.shape(inputMatrix)[1]
+outputMatrix = rotateBy90(inputMatrix) # what are the dots in the printed output?!!
+print outputMatrix
+
+#@CTCI 7: If an element in a matrix is 0, force all elements in the entire row
+# and column intersecting this element to be 0
+import numpy as np
+def zeroOutRowCol(inputMatrix):
+    #Get the [x, y] position of this element
+    # lists allow retrieving index like this: tmplist.index(value you are looking for)
+    # testlist.index(element) if element in testlist else None
+    # np arange / arrays don't have the option
+    # Set [x, :] and [:, y] to 0
+    inputMatrix[:, 1] = inputMatrix[1,:] = [0,0,0]  #this notation works only for numpy arrays
+    return inputMatrix
+
+inputMatrix = np.array([[1, 2, 3], [4, 0, 6], [7, 8, 9]])
+coord = [4,4]
+outputMatrix = zeroOutRowCol(inputMatrix)
+print outputMatrix
+
+# @CTCI8. Detect if a string is a rotated version of an another string.
+# This will fail when the test string is shorter than the original, for eg: dentstu and dentst
+# will both be detected as rotated versions of the original. Add size check
+def isRotated(originalString, testString):
+
+    #check if the size of both the strings are the same.
+    if len(originalString) == len(testString):
+        #append the originalString to itself
+        appendedString = originalString + originalString
+
+        #look for the rotatedString in the appendedString. Do substring search
+        #if found, testString is a rotated version of original string
+        if testString in appendedString:
+            return True
+        else:
+            return False
+    else:
+        return False
+
+originalString = 'student'
+testString = 'dentst'
+print(isRotated(originalString, testString))
