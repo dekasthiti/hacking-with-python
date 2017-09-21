@@ -255,3 +255,26 @@ def isRotated(originalString, testString):
 originalString = 'student'
 testString = 'dentst'
 print(isRotated(originalString, testString))
+
+# Reverse a string in a way that "I am a test string" becomes "string test a am I"
+def reverse(inputString):
+    # There is no reverse() function for str. Rationale is in "https://stackoverflow.com/questions/931092/reverse-a-string-in-python"
+    # Using slicing instead
+    # From end to beginning in steps of -1
+    tmp = inputString[-1::-1] 
+    #tmp2 = []
+    tmp2 = '' # this is a string object. Declaring and initializing tmp2 = [] makes it a list and
+              # you can call append on it. You cannot call append on a string object
+    for s in tmp.split(' '):
+        # since strings are immutable, when you concatenate, you 
+        # create a new string, can be very expensive, though CPython 
+        # has a way to optimize this
+        # Recommendation is to use append instead, but append adds 
+        # array of words to the list, like ['string', 'test', 'a', 'am', 'I']
+        #tmp2.append(s[-1::-1] + ' ')
+        tmp2+= s[-1::-1] + ' '
+    return tmp2
+
+inputString = "I am a test string"
+outputString = reverse(inputString)
+print("Reverse string is: %s" % outputString)
