@@ -21,7 +21,7 @@ def caesar_cipher(plain_text='', shift_value=0):
         else:
             # What happens when we cross 'z' : either the shift_value is big or because we have the
             # last letters of the alphabet?
-            new_plain_text += chr(ord(letter) + shift_value)
+            new_plain_text += chr(ord(letter) + shift_value % 26)
     return new_plain_text
 
 
@@ -35,13 +35,34 @@ def caesar_cipher_with_stdlib(plain_text='', shift_value=0):
     return plain_text.translate(translation_table)
 
 
+def caesar_cipher_with_custom_transtab(plain_text='', shift_value=0):
+    import string
+    
+    def shift_n(letter, n):
+        n = n % 26
+        translation_table = string.ascii_lowercase[n:] + string.ascii_lowercase[:n]
+        try:
+            # Find position of the letter in the original alphabet
+            index = string.ascii_lowercase.index(letter)
+            
+            # Find the corresponding letter in the destination alphabet
+            translated_character = translation_table[index]
+            return translated_character
+        except IndexError:
+            return letter
+       
+    enc_list = [shift_n(letter, shift_value) for letter in plain_text]
+    return ''.join(enc_list)
+
+
 def main():
     plain_text = 'hello'
     
-    assert caesar_cipher(plain_text, 4) == 'lipps'
-    
+    assert caesar_cipher(plain_text, 4) == caesar_cipher_with_custom_transtab(plain_text, 4) == caesar_cipher_with_stdlib(plain_text, 4) == 'lipps'
+    #
     print(f'Cipher for {plain_text} is {caesar_cipher(plain_text, 4)}')
     print(f'Cipher for {plain_text} is {caesar_cipher_with_stdlib(plain_text, 4)}')
+    print(f'Cipher for {plain_text} is {caesar_cipher_with_custom_transtab(plain_text, 4)}')
     
     
 if __name__ == '__main__':
